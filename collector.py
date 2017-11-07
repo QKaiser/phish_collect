@@ -3,6 +3,7 @@ import logging
 import requests
 import socket
 import urllib3
+import os
 
 from datetime import datetime
 from urlparse import urlparse, urljoin
@@ -20,6 +21,9 @@ Jordan Wright <jwright@duo.com>
 '''
 # disable warnings when SSL cert is invalid
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+if not os.path.exists(config['collector']['kit_directory']):
+    os.mkdir(config['collector']['kit_directory'])
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
