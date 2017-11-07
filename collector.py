@@ -155,8 +155,8 @@ class Collector(object):
             href = a['href']
             if href and href[0] == '?':
                 continue
-            # TODO: Normalize this url to support only relative urls
-            links.append(urljoin(url, href))
+            if urlparse(url).netloc == urlparse(href).netloc:
+                links.append(urljoin(url, href))
         return links
 
     def collect_kits(self, sample):
