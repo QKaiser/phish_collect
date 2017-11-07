@@ -18,8 +18,6 @@ class PhishtankFeed(Feed):
         self.feed = 'phishtank'
         self.url = config['phishtank']['url']
         self.last_seen = config['phishtank']['last_seen']
-        self.username = config['phishtank']['username']
-        self.password = config['phishtank']['password']
 
     def _process_rows(self, rows):
         '''
@@ -33,7 +31,7 @@ class PhishtankFeed(Feed):
         0	phish_id	The ID number by which Phishtank references this phishing submission.
         1	url	The phish URL as submitted to us. Because URLs can contain special characters, they are urlencoded on output.
         '''
-        reader = csv.reader(rows, delimiter='\t')
+        reader = csv.reader(rows, delimiter=',')
         entries = []
         urls_seen = []
         for record in reader:
@@ -70,39 +68,19 @@ class PhishtankFeed(Feed):
         logging.info(
             'Fetching {} feed with last offset: {}'.format(self.feed, offset))
         results = []
-        params = {'last': offset}
-        response = requests.get(
-            self.url,
-            timeout=5,
-            params=params,
-            auth=(self.username, self.password))
+        response = requests.get(self.url)
         if not response.ok:
             raise FetchException(
                 'Error fetching response:\nStatus: {}\nResponse:{}'.format(
                     response.status_code, response.text))
 
-        # The first row is the maximum phish id in our database. 
+        # The first row is the maximum phish id in our database.
         # The second row is the minimum phish id in our database
         # which is known to be online and functional. You can mark any id in your
         # database lower than this as offline without further checking
         # against our system.
         entries = response.text.splitlines()
-        if not entries or len(entries) < 2:
-            raise FetchException(
-                'Error fetching response: Invalid response received: {}'.
-                format(entries))
-        # If there are no new entries, just return an empty list
-        if len(entries) == 2:
-            return results
-        max_id = entries[0]
-        results = self._process_rows(entries[2:])
-        if not results:
-            return results
-        self.last_seen = results[-1].pid
-        if max_id != self.last_seen:
-            # Recursively get the next set of results
-            logging.info(
-                'Getting next set of results. Max ID: {} Current ID: {}'.
-                format(max_id, self.last_seen))
-            results.extend(self.get(offset=self.last_seen))
+	results = self._process_rows(entries[2:])
+	if len(results) > 1:
+		self.last_seen = results[1].pid
         return results
