@@ -2,6 +2,7 @@ import hashlib
 import logging
 import requests
 import socket
+import urllib3
 
 from datetime import datetime
 from urlparse import urlparse, urljoin
@@ -17,6 +18,8 @@ collector.py - Parses and collects phishing samples from Phishtank's API and Ope
 
 Jordan Wright <jwright@duo.com>
 '''
+# disable warnings when SSL cert is invalid
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
