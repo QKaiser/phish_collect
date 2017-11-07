@@ -56,7 +56,7 @@ class Collector(object):
             status_code, html = self.collect_html(sample.url)
             sample.html = html
             sample.status_code = status_code
-            sample.ip_address = self.lookup_ip(sample.url)
+            sample.ip_address = self.lookup_ip(pats.hostname)
 
             kits = self.collect_kits(sample)
 
@@ -74,8 +74,7 @@ class Collector(object):
 
     def lookup_ip(self, url):
         '''
-        Returns the IP address the URL resolves to. 
-        TODO: We'll want to remove the port if it exists.
+        Returns the IP address the URL resolves to.
 
         Args:
             url - The URL of the phishing page
@@ -234,7 +233,7 @@ class Collector(object):
 
         Args:
             url {str} - The URL to fetch
-        
+
         Returns:
             status_code {int} The status code of the HTTP response
             html {str} The HTML returned
