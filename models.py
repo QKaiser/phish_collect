@@ -2,6 +2,12 @@
 from datetime import datetime
 from elasticsearch import Elasticsearch
 from urlparse import urlparse
+import logging
+
+# disable elasticsearch verbose logging
+tracer = logging.getLogger('elasticsearch')
+tracer.setLevel(logging.CRITICAL)
+tracer.addHandler(logging.FileHandler('collector.log'))
 
 es = Elasticsearch()
 
