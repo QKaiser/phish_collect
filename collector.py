@@ -60,7 +60,7 @@ class Collector(object):
             status_code, html = self.collect_html(sample.url)
             sample.html = html
             sample.status_code = status_code
-            sample.ip_address = self.lookup_ip(pats.hostname)
+            sample.ip_address = self.lookup_ip(parts.hostname)
 
             kits = self.collect_kits(sample)
 
